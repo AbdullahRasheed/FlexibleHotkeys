@@ -2,6 +2,8 @@ package me.dedose.hotkeys.hotkeys;
 
 import org.lwjgl.input.Keyboard;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,5 +26,24 @@ public class HotkeyManager {
 
     public static String keyToString(int key){
         return Keyboard.getKeyName(key);
+    }
+
+    public static Map<String, Integer> keyMap(){
+        try {
+            Class keyboardClass = Keyboard.class;
+            Constructor[] constructors = keyboardClass.getDeclaredConstructors();
+            constructors[0].setAccessible(true);
+            Object o = constructors[0].newInstance();
+            Keyboard keyboard = (Keyboard)o;
+            constructors[0].setAccessible(false);
+
+            Field keyMapField = Keyboard.class.getDeclaredField("keyMap");
+            keyMapField.setAccessible(true);
+            Map<String, Integer> keyMap = (Map<String, Integer>) keyMapField.get(keyboard);
+            keyMapField.setAccessible(false);
+            return keyMap;
+        }catch (Exception e){
+            return null;
+        }
     }
 }

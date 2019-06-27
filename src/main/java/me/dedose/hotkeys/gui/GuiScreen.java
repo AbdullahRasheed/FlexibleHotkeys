@@ -97,7 +97,7 @@ public class GuiScreen extends net.minecraft.client.gui.GuiScreen {
             return;
         }
 
-        Map<String, Integer> keyMap = keyMap();
+        Map<String, Integer> keyMap = HotkeyManager.keyMap();
         int key = -1;
         for (String s : keyMap.keySet()) {
             int currentKey = keyMap.get(s);
@@ -121,25 +121,6 @@ public class GuiScreen extends net.minecraft.client.gui.GuiScreen {
             GuiScreen.title = HotkeyManager.keyToString(GuiScreen.key1) + " binded with " + HotkeyManager.keyToString(GuiScreen.key2);
             HotkeyMod.syncFile();
             return;
-        }
-    }
-
-    public Map<String, Integer> keyMap(){
-        try {
-            Class keyboardClass = Keyboard.class;
-            Constructor[] constructors = keyboardClass.getDeclaredConstructors();
-            constructors[0].setAccessible(true);
-            Object o = constructors[0].newInstance();
-            Keyboard keyboard = (Keyboard)o;
-            constructors[0].setAccessible(false);
-
-            Field keyMapField = Keyboard.class.getDeclaredField("keyMap");
-            keyMapField.setAccessible(true);
-            Map<String, Integer> keyMap = (Map<String, Integer>) keyMapField.get(keyboard);
-            keyMapField.setAccessible(false);
-            return keyMap;
-        }catch (Exception e){
-            return null;
         }
     }
 
