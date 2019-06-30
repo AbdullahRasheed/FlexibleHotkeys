@@ -78,7 +78,25 @@ public class GuiScreen extends net.minecraft.client.gui.GuiScreen {
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
+        if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
+            mc.thePlayer.closeScreen();
+            return;
+        }
+
+        if(GuiScreen.rebinding){
+            GuiScreen.key1 = keyCode;
+            GuiScreen.rebinding = false;
+            GuiScreen.rebinding1 = true;
+            GuiScreen.title = "Press the key to bind to";
+            return;
+        }else if(GuiScreen.rebinding1){
+            GuiScreen.key2 = keyCode;
+            GuiScreen.rebinding1 = false;
+            HotkeyManager.registerKeybind(GuiScreen.key1, GuiScreen.key2);
+            GuiScreen.title = HotkeyManager.keyToString(GuiScreen.key1) + " binded with " + HotkeyManager.keyToString(GuiScreen.key2);
+            HotkeyMod.syncFile();
+            return;
+        }
     }
 
     @Override
@@ -92,36 +110,7 @@ public class GuiScreen extends net.minecraft.client.gui.GuiScreen {
 
     @Override
     public void handleKeyboardInput() throws IOException {
-        if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
-            mc.thePlayer.closeScreen();
-            return;
-        }
 
-        Map<String, Integer> keyMap = HotkeyManager.keyMap();
-        int key = -1;
-        for (String s : keyMap.keySet()) {
-            int currentKey = keyMap.get(s);
-            if(Keyboard.isKeyDown(currentKey)) key = currentKey;
-        }
-        if(key == -1) return;
-        System.out.println(2);
-
-        if(GuiScreen.rebinding){
-            System.out.println(3);
-            GuiScreen.key1 = key;
-            GuiScreen.rebinding = false;
-            GuiScreen.rebinding1 = true;
-            GuiScreen.title = "Press the key to bind to";
-            return;
-        }else if(GuiScreen.rebinding1){
-            System.out.println(4);
-            GuiScreen.key2 = key;
-            GuiScreen.rebinding1 = false;
-            HotkeyManager.registerKeybind(GuiScreen.key1, GuiScreen.key2);
-            GuiScreen.title = HotkeyManager.keyToString(GuiScreen.key1) + " binded with " + HotkeyManager.keyToString(GuiScreen.key2);
-            HotkeyMod.syncFile();
-            return;
-        }
     }
 
     @Override
